@@ -1,3 +1,9 @@
 [submodule "pico_mqtt/-f"]
 	path = pico_mqtt/-f
 	url = https://github.com/eclipse/paho.mqtt.c.git
+[submodule "pico_mqtt/external"]
+	path = pico_mqtt/external
+	url = https://github.com/eclipse/paho.mqtt.c.git
+[submodule "pico_mqtt/external/paho.mqtt.c.git"]
+	path = pico_mqtt/external/paho.mqtt.c.git
+	url = https://github.com/eclipse/paho.mqtt.c.git
