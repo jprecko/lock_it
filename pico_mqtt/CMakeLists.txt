@@ -17,7 +17,7 @@ project(my_project CXX C ASM)
 # initialize the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-
+add_subdirectory(external/paho.mqtt.c.git)
 
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 # add_executable(picow_blink ${SRC_FILES})
