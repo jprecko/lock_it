@@ -1,15 +1,19 @@
 #include <Keypad.h>
 #include <WiFi.h>
-#include "ThingSpeak.h"
+#include <PubSubClient.h>
 
 const char* ssid = "NetworkName";
 const char* password = "NetworkPassword";
-unsigned long thingSpeakChannel = X;
-const char* APIKey = "XXXXXXXXXXXXXXXX";
+
+const char* mqttServer = "192.168.10.10";
+const int mqttPort = 12948;
+const char* mqttUser = "MQTTusername";
+const char* mqttPassword = "MQTTpassword";
 
 WiFiClient client;
+PubSubClient MQTTclient(client);
 
-// symbols on the buttons of the keypad
+// define the symbols on the buttons of the keypad
 char keys[4][4] = {
  {'1', '2', '3', 'A'},
  {'4', '5', '6', 'B'},
@@ -18,7 +22,7 @@ char keys[4][4] = {
 };
 byte rowPins[4] = {14, 27, 26, 25}; // connect to the row pinouts of the keypad
 byte colPins[4] = {13, 21, 22, 23}; // connect to the column pinouts of the keypad
-// initialize an instance of class Keypad
+// initialize an instance of class NewKeypad
 Keypad myKeypad = Keypad(makeKeymap(keys), rowPins, colPins, 4, 4);
 
 int buzzerPin = 18;
@@ -29,7 +33,7 @@ void setup() {
     Serial.begin(115200);
     delay(500);
 
-    WiFi.mode(WIFI_STA); // Wifi mode station, optional
+    WiFi.mode(WIFI_STA); //Optional
     WiFi.begin(ssid, password);
     Serial.println("\nConnecting");
 
@@ -42,7 +46,25 @@ void setup() {
     Serial.println("\nConnected to the WiFi network");
     Serial.print("Local ESP32 IP: ");
     Serial.println(WiFi.localIP());
-    ThingSpeak.begin(client);  // Initialize ThingSpeak
+
+    MQTTclient.setServer(mqttServer, mqttPort);
+
+    while (!MQTTclient.connected()) {
+        Serial.println("Connecting to MQTT...");
+
+        if (MQTTclient.connect("Smartlock1", mqttUser, mqttPassword )) 
+        {
+            Serial.println("connected");  
+        }
+        else 
+        {
+        Serial.print("failed with state ");
+        Serial.print(MQTTclient.state());
+        delay(2000);
+
+        }
+    }
+
     static int numberSucces = 0;
     static int numberFailed = 0;
 }
@@ -73,18 +95,7 @@ void loop() {
     {
         Serial.println("Password correct!");
         numberSucces++;
-        int x = ThingSpeak.writeField
-                (myChannelNumber, 1, numberSucces, APIKey);
-        if(x == 200)
-        {
-            Serial.println("Channel update successful.");
-        }
-        else
-        {
-            Serial.println("Problem updating channel. 
-                            HTTP error code " + String(x));
-        }
-
+        MQTTclient.publish("smartlock/test", "Successful unlock");
     }
     else 
     {
@@ -93,17 +104,7 @@ void loop() {
         digitalWrite(buzzerPin, LOW);
         Serial.println("Password NOT correct!");
         numberFailed++;
-        int x = ThingSpeak.writeField
-                (myChannelNumber, , numberFailed, APIKey);
-        if(x == 200)
-        {
-            Serial.println("Channel update successful.");
-        }
-        else
-        {
-            Serial.println("Problem updating channel. 
-                            HTTP error code " + String(x));
-        }
+        MQTTclient.publish("smartlock/test", "Wrong code entered!");
     }
     keyInNum = 0; // Reset the number of the input characters to 0
     }
