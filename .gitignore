@@ -1,6 +1,3 @@
 /kubernetes
 
 /lock_it
-
-/pico_mqtt/.vscode
-/pico_mqtt/config.py
