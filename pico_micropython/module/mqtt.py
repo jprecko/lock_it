@@ -21,7 +21,7 @@ class Mqtt:
         client = MQTTClient(client_id=self.id,
                             # client_id=b'{id}',
                             server=config.MQTT_SERVER,
-                            port=1883,
+                            port=0,
                             user=config.MQTT_U,
                             password=config.MQTT_U,
                             keepalive=7200,

@@ -1,11 +1,11 @@
 import network
 from time import sleep
-
+import config
 
 class Wifi:
-    def __init__(self, ssid: str, password: str) -> None:
-        self.ssid = ssid
-        self.password = password
+    def __init__(self) -> None:
+        self.ssid = config.WIFI_U
+        self.password = config.WIFI_P
         pass
 
     def connect(self) -> str:

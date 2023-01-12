@@ -11,7 +11,7 @@ import config
 class Main:
     def main():
 
-        wifi = Wifi(config.WIFI_U, config.WIFI_P)
+        wifi = Wifi()
         try:
             wifi.connect()
         except KeyboardInterrupt:
