@@ -23,6 +23,7 @@ Efter att 4 siffror matats in (lyckat eller misslyckat) så återställs array:e
 ### Vilken hårdvara och IOT-miljö har används och varför?
 För denna del av projektet har vi använt oss av mikrokontrollern ESP32 med ett breakout till breadboard.
 Därför den var relativt billig, kompatibel med Arduino framework och hade både wifi och bluetooth inbyggt.
+En keypad, buzzer, S8050 transistor som förstärker signalen till buzzer som gör blipp ljud och motstånd.
 
 ### Vad hade du gjort framåt om du haft mer tid?
 Då hade vi velat skapa en riktig MQTT server på en edge device med Ubuntu och plottat lyckade och misslyckade försök på en webbsida.
