@@ -1,6 +1,7 @@
 from machine import ADC, Pin
 import time
 import re
+import config
 
 
 class Temperature:
@@ -49,7 +50,7 @@ class Log():
         pass
 
     def logTemperature(self) -> int:
-        num_entries = 5
+        num_entries = config.NUM_LOG_ROWS | 5
 
         header = ['timestamp', 'temperature']
         timestamp = self.getTimestamp()

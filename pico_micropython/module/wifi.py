@@ -2,6 +2,7 @@ import network
 from time import sleep
 import config
 
+
 class Wifi:
     def __init__(self) -> None:
         self.ssid = config.WIFI_U

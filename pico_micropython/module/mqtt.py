@@ -18,17 +18,16 @@ class Mqtt:
         pass
 
     def connectMQTT(self) -> None:
+        print(config.MQTT_SERVER)
+        print(config.MQTT_U)
+        print(config.MQTT_P)
         client = MQTTClient(client_id=self.id,
                             # client_id=b'{id}',
-                            server=config.MQTT_SERVER,
                             port=0,
+                            server=config.MQTT_SERVER,
                             user=config.MQTT_U,
-                            password=config.MQTT_U,
-                            keepalive=7200,
-                            # ssl=True,
-                            # ssl_params={'server_hostname':'8fbadaf843514ef286a2ae29e80b15a0.s1.eu.hivemq.cloud'}
-                            )
-
+                            password=config.MQTT_P,
+                            keepalive=7200)
         client.connect()
         self.client = client
         # return client
