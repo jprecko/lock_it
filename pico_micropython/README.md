@@ -28,6 +28,11 @@ Every cycle of the main loop checks whether the latest entry of the temperature 
 
 The choice of writing the program in micropython is beneficial in the case of delivering a program quickly, but with a wider time frame C/C++ could be a better choice for efficiency and freedom in formatting the program. Stability feathers like, error handling and reconnection wifi and mqtt are to must haves. Other things that could be done with a wider time frame is adding more entries to feathers like the ones that can be found in this project. 
 
+
+For pin mapping please refer to following documentation,
+[Pico Map](https://datasheets.raspberrypi.com/picow/PicoW-A4-Pinout.pdf)
+
+Gates like 'and', 'or' and 'inverter' can be found scattered throughout the code.
 ## TOD
 * Error handling for, "fail to connect to MQTT server".
 
