@@ -12,7 +12,7 @@ int pos = 0;
 #define Password_length 5         //längd av lössenordet + null karaktär
 char Data[Password_length];       // Karakär för att hålla lössenordet 
 char Master[Password_length] = "1234";      // själva Lössenordet 
-byte date_count = 0;                   // räknare för Karaktär som är 0 från början
+byte cols_count = 0;                   // räknare för Karaktär som är 0 från början
 char key;           // den håller karaktär som matas in från keypad
 
 const uint8_t ROWS = 4;
@@ -46,13 +46,13 @@ void loop() {
 
   if(key)
   {
-    Data[date_count] = key; 
-    lcd.setCursor(date_count, 1);
-    lcd.print(Data[date_count]);
+    Data[cols_count] = key;  // varje hång man trycker en key cols_count plusas med 1 så att koden som man trycker visas efter varandra
+    lcd.setCursor(cols_count, 1);
+    lcd.print(Data[cols_count]);
     Serial.println(Data[date_count]);
     date_count++;
   }
-  if (date_count == Password_length -1)
+  if (cols_count == Password_length -1)
   {
     if (!strcmp(Data, Master)) // här jämförs (Data som matas in  ) och (Master som är riktiga lössenordet)
     {
@@ -67,9 +67,9 @@ void loop() {
       delay(1000);
     }
     lcd.clear();
-    while (date_count !=0)
+    while (cols_count !=0)
     {
-      Data[date_count--] = 0;
+      Data[cols_count--] = 0;
     }
     return;
   }
