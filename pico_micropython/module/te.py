@@ -1,3 +1,5 @@
+# Tester file
+
 import re
 decoded_topic = "users/usr1/lamp/toggle"
 
