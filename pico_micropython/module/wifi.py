@@ -4,11 +4,13 @@ import config
 
 
 class Wifi:
+
     def __init__(self) -> None:
         self.ssid = config.WIFI_U
         self.password = config.WIFI_P
         pass
 
+    # Connect to wifi
     def connect(self) -> str:
         # Connect to WLAN
         global mqtt

@@ -1,5 +1,4 @@
 import machine
-import _thread
 from time import sleep
 from module.helper import *
 from module.wifi import *
@@ -10,100 +9,51 @@ import config
 
 class Main:
     def main():
-
+        # WIFI Connection
         wifi = Wifi()
         try:
             wifi.connect()
         except KeyboardInterrupt:
             machine.reset()
 
+        # MQTT Connect
         mqtt = Mqtt()
         mqtt.connectMQTT()
-        mqtt.publish('user/connected', str(mqtt.id.decode("utf-8")))
         mqtt_id = mqtt.id.decode("utf-8")
         print(f'Client id: {mqtt_id}')
 
+        # Notify server of connection
+        mqtt.publish('user/connected', str(mqtt.id.decode("utf-8")))
+
         temp = Temperature()
+
         log = Log()
+
         try:
+
+            # Subscribe to toggle of lamp for user
             mqtt.test_call()
             mqtt.subscribe(f"users/{mqtt_id}/lamp/toggle")
+
+            # Main loop
             while True:
-                # micropython.mem_info()
+
+                # look for subscribed msg
                 mqtt.client.check_msg()
+
+                # Check if new log is needed
                 if log.logComp(log.getTimestampFromLog(), 60):
                     temperature = str(temp.read())
+
                     # publish as MQTT payload
                     mqtt.publish('picow/temperature', str(temperature))
-
                     log.logTemperature()
-                # else:
-                    # print('gammal')
-                # machine.
                 sleep(1)
         finally:
+            # Disconnect before exit
             mqtt.client.disconnect()
 
 
-def set_up() -> None:
-    global mqtt
-    wifi = Wifi(config.WIFI_U, config.WIFI_P)
-
-    try:
-        wifi.connect()
-    except KeyboardInterrupt:
-        machine.reset()
-
-    mqtt = Mqtt()
-    mqtt.connectMQTT()
-
-    temp = Temperature()
-
-
-def core0_thread():
-    global mqtt
-
-    mqtt.test_call()
-    mqtt.subscribe('picow/temperature')
-
-    try:
-        while 1:
-            # micropython.mem_info()
-            mqtt.client.wait_msg()
-    finally:
-        mqtt.client.disconnect()
-
-
-def core1_thread():
-    global mqtt
-
-    temp_log = open("log/temp.csv", "w")
-    temp = Temperature()
-
-    try:
-        while 1:
-            # micropython.mem_info()
-            temperature = str(temp.read())
-
-            # print(temperature)
-
-            # publish as MQTT payload
-            mqtt.publish('picow/temperature', temperature)
-
-            temp_log.write(str(temperature)+",")
-            temp_log.flush()
-            machine.lightleep(1000 * 100)
-            # sleep(100)
-    finally:
-        temp_log.close()
-        mqtt.client.disconnect()
-
-
-# _thread.allocate_lock
-
-# set_up()
-# second_thread = _thread.start_new_thread(core1_thread, ())
-
-# _thread.allocate_lock
+# Start point
 if __name__ == '__main__':
     Main.main()

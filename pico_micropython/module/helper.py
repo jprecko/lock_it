@@ -11,21 +11,17 @@ class Temperature:
         self.conversion_factor = 3.3 / (65535)
         pass
 
+    # Read core temperature
     def read(self) -> float:
         sensor_temp = self.sensor_temp
         conversion_factor = self.conversion_factor
-
         reading = sensor_temp.read_u16() * conversion_factor
-
-        # The temperature sensor measures the Vbe voltage of a biased bipolar diode, connected to the fifth ADC channel
-        # Typically, Vbe = 0.706V at 27 degrees C, with a slope of -1.721mV (0.001721) per degree.
         temperature = 27 - (reading - 0.706)/0.001721
-        # print(f'{temperature}', end='\n')
         return temperature
 
 
 class Csv:
-
+    # Read CSV formated file and return a array
     def read(self, file):
         arr = []
         for x in file:
@@ -33,6 +29,7 @@ class Csv:
             arr.append(x.split(','))
         return arr
 
+    # Write CSV format array of data to file
     def writeRow(self, file, data):
         string = ''
         for i in range(len(data)):
@@ -49,6 +46,7 @@ class Log():
         self.time_stamp: int
         pass
 
+    # Write temperature to temp.csv log.
     def logTemperature(self) -> int:
         num_entries = config.NUM_LOG_ROWS | 5
 
@@ -56,7 +54,6 @@ class Log():
         timestamp = self.getTimestamp()
 
         data = [timestamp, Temperature().read()]
-        # data = [timestamp, 10]
         csv = Csv()
         bottle_list = []
         try:
@@ -67,7 +64,6 @@ class Log():
             file = open('log/temp.csv', 'w+')
             file.close()
         with open('log/temp.csv', 'w') as b:
-            # csv.writeRow(b, bottle_list)
             csv.writeRow(b, header)
             csv.writeRow(b, data)
 
@@ -77,6 +73,7 @@ class Log():
                 csv.writeRow(b, bottle_list[i])
         return timestamp
 
+    # Get the most reascent timestamp from temp.csv log.
     def getTimestampFromLog(self) -> int | None:
         csv = Csv()
         bottle_list = []
@@ -85,43 +82,28 @@ class Log():
                 bottles = csv.read(b)
                 bottle_list.extend(bottles)
         except:
-            # print('No data')
             return None
         try:
-            # print(bottle_list[1][0])
             return int(bottle_list[1][0])
         except:
-            # print('No data')
             return None
 
+    # Get current timestamp
     def getTimestamp(self) -> int:
         time_stamp = time.mktime(time.gmtime())
-
-        # time_stamp = current_time.timestamp()
-        # print("timestamp:-", time_stamp)
-
         return time_stamp
 
-    # broke
+    # broken
     def getTimeFromTimestamp(self, time_stamp) -> int:
-        # date_time = datetime.fromtimestamp(time_stamp)
-        # print("The date and time is:", date_time)
         return 1
 
-    # def addSecs(self, org_time, secs) -> datetime:
-    #     return datetime.timestamp(datetime.fromtimestamp(org_time) + timedelta(seconds=secs))
-
+    # Compare newest timestamp to current timestamp + secToAdd.
     def logComp(self, log, secToAdd) -> int | bool:
-        # print(self.getTimestamp())
-        # print((log))
-        # print((log) + (secToAdd))
         time = self.getTimestamp()
         if log is None or time >= (log) + (secToAdd):
-            # self.time_stamp = time
             return True
         else:
             return False
-        # return (self.getTimestamp() >= self.time_stamp + (1000 * 60))
 
 
 class Lamp:
@@ -132,6 +114,7 @@ class Lamp:
         led.toggle()
 
 
+# Look if topic is included in target.
 class MatchTopic:
     def test(self, topic, target: str):
         try:
